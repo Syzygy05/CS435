@@ -1,108 +1,143 @@
 class Node:
-    def __init__(self, num):
-        self.num = num
-        self.left = None
-        self.right = None
+	def __init__(self, data):
+		self.value = data
+		self.leftChild = None
+		self.rightChild = None
 
+class BinarySearchTree:
 
-class BST:
 	def __init__(self):
 		self.root = None
+		self.dataList = []
 
 
-	def insertRec(node, num):
+	def insertRec(self, currNode, data):
+		# If the Root is non-existent, then added node as root
+		if self.root == None:
+			self.root = Node(data)
+			self.dataList.append(self.root)
+			#print('1inserted node ' + str(data))
+		else:
+			if data < currNode.value:
+				if currNode.leftChild == None:
+					currNode.leftChild = Node(data)
+					self.dataList.append(currNode.leftChild)
+					#print('2inserted node ' + str(data))
+				else:
+					currNode = currNode.leftChild
+					self.insert(currNode, data)
+			elif data > currNode.value:
+				if currNode.rightChild == None:
+					currNode.rightChild = Node(data)
+					self.dataList.append(currNode.rightChild)
+					#print('3inserted node ' + str(data))
+				else:
+					currNode = currNode.rightChild
+					self.insert(currNode, data)
+
+
+	def deleteRec(self, root, data):
+		if self.root == None:
+			print('Tree is empty')
+
 		if root == None:
-			root = Node(num)
 			return root
-		elif num < root.num:
-			root.left = insertRec(root.left, num)
-		elif num > root:
-			root.right = insertRec(root.right, num)
+		elif data < root.value:
+			root.leftChild = self.delete(root.leftChild, data)
+		elif data > root.value:
+			root.rightChild = self.delete(root.rightChild, data)
+		else:
+			if root.leftChild == None:
+				return root.rightChild
+			elif root.rightChild == None:
+				return root.leftChild
+
+			root = self.findNextRec(root.rightChild)
+			root.rightChild = self.delete(root.rightChild, root.value)
 
 		return root
 
-	def deleteRec(root, num):
-		# Does the opposite traversal that you would do in insertRec
-		if root == None:
-			return 'Tree is empty!'
-		elif root < num:
-			root.right = deleteRec(root.right, num)
-		elif root > num:
-			root.left = deleteRec(root.left, num)
+
+		'''
+		if self.root.leftChild == None and self.root.rightChild == None:
+			self.root = None
+		elif self.root.leftChild != None and self.root.rightChild == None:
+			self.root = self.root.leftChild
+			self.root.leftChild = None
+		elif self.root.leftChild == None and self.root.rightChild != None:
+			self.root = self.root.rightChild
+			self.root.rightChild = None
 		else:
-			if root.right == None:
-				return root.left
-			elif root.left = None:
-				return root.right
-			else:
-				root.num = findNext(root.right)
-				root.right = deleteRec(root.right, root.num)
-				return root
+			replacementNode = self.findNextRec(node)
+			node = replacementNode
+			
+			
+		# Need to find the next largest number from the root and replace
+		# The leftmost node in the right subtree from the root
+		'''
+
+	def findNextRec(self, node):
+		if node == None:
+			print('Tree is empty')
+		elif node.rightChild != None:
+			node = self.findMinRec(node.rightChild)
+
+		return node
+
+			
+
+	def findPrevRec(self, node):
+		if node == None:
+			print('Tree is empty')
+		elif node.leftChild != None:
+			node = self.findMaxRec(node.leftChild)
+
+		return node
 		
-		if root.left = None 
 
-	def findNextRec(node):
-		currentNode = node.data
-		if currentNode.right != None:
-			currentNode = findNextRec(currentNode.left)
-		return currentNode
+	def findMinRec(self, node):
+		if node == None:
+			print('Tree is empty.')
+		elif node.leftChild != None:
+			node = self.findMinRec(node.leftChild)
+
+		return node
 
 
-	def findPrevRec(node):
-		currentNode = node.data
-		if currentNode.left != None:
-			currentNode = findNextRec(currentNode.right)
-			return findMaxrec()
+	def findMaxRec(self, node):
+		if node == None:
+			print('Tree is empty.')
+		elif node.rightChild != None:
+			node = self.findMaxRec(node.rightChild)
 
-	def findMinRec(root):
-		if root == null:
-			return 'Tree is empty'
-		elif root.left != None:
-			node = findMinRec(root.left)
-			return node.data
+		return node
 
-	def findMaxrec(root):
-		if root == null:
-			return 'Tree is empty'
-		elif root.right != None:
-			node = findMinRec(root.right)
-			return node.data
 
 
 '''
-i) 	This question is simply asking us how we would implement these functions
-	critical to the use of a Binary Search Tree through recursive algorithms. 
 
-	Assumptions: 
-	1) I am assumming that the class definitions have already been defined.
-	2) I am also assumming that no duplicate num values will be passed to 
-	the tree 
+tree = binarySearchTree()
 
-ii)	For insert, I've ensured that a root already exists. Also, you have to 
-	make sure that you are not inserting a node that already exists.
 
-	For delete, the function will warn you that you are attempting to delete
-	from an empty tree. 
 
-	For findPrev/findNext/findMin/findMax, an edge case would be if the tree 
-	is empty. For findPrev and findNext, if there is only one node in the 
-	tree, (the root), then there exists no other node that will satisfy these 
-	functions. Null needs to programmed in to the method. 
+tree.insert(tree.root, 50)
+tree.insert(tree.root, 35)
+tree.insert(tree.root, 75)
+tree.insert(tree.root, 25)
+tree.insert(tree.root, 85)
+tree.insert(tree.root, 45)
 
-iii) See attached pdf
 
-iv)	Create an algorithm for each method. (Does not need to be submitted)
 
-v)	Time and space are always something that is at the forethought when using
-	recursion to computer something. If the tree is very large, we will keep 
-	making recursive calls for all of these methods. 
 
-vi)	See code 
+print(tree.delete(tree.root, 35).value)
 
-vii) I'm not quite sure what problems I could run into other than my recursion
-	 is wrong and therefore I will run into space issues or incorrect answers.
-	 I suppose a seg fault is the result then.
+
 '''
+
+
+
+
 
 
 
